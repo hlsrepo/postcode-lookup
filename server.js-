@@ -1,0 +1,71 @@
+const express = require('express');
+const mysql = require('mysql2');
+const path = require('path');
+
+const app = express();
+const PORT = 3000;
+
+// MySQL connection setup
+
+
+// Connect to MySQL
+connection.connect(err => {
+  if (err) {
+    console.error('❌ Database connection failed:', err.stack);
+    return;
+  }
+  console.log('✅ Connected to database');
+});
+
+// Serve frontend files from the "public" folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/lookup', (req, res) => {
+  const postcode = req.query.postcode;
+  if (!postcode) {
+    return res.status(400).json({ error: 'Please provide a postcode' });
+  }
+
+  const query = 'SELECT courier_channel FROM courier_mapping WHERE postcode = ? LIMIT 1';
+  connection.query(query, [postcode], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database query failed' });
+    }
+
+    if (results.length > 0) {
+      const courier_channel = results[0].courier_channel;
+      
+      // Define allowed courier channels
+      const allowedChannels = [
+        'laverty-nsw',
+        'dorevitch-vic',
+        'wdp-wa',
+        'abbott',
+        'qml-qld'
+      ];
+
+      // Check if it's in allowed list
+      const delivers = allowedChannels.includes(courier_channel.toLowerCase());
+
+      res.json({
+        courier_channel,
+        delivers,
+        message: delivers 
+          ? '✅ Yes, we deliver to this postcode.' 
+          : '❌ Sorry, we do not deliver to this postcode.'
+      });
+    } else {
+      res.json({
+        courier_channel: null,
+        delivers: false,
+        message: '❌ No courier found for this postcode.'
+      });
+    }
+  });
+});
+
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
