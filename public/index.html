@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Postcode Courier Lookup</title>
+  <title>Courier form availability lookup</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
       }
       .body-content {
           max-width: 600px;
-          margin: auto;
+          margin: 0 auto 0 0;
           background: #f2f5f8;
           border-radius: 30px;
           padding: 50px;
@@ -82,7 +82,7 @@
 </head>
 <body>
   <div class="body-content">
-     <h2>Postcode Courier Lookup</h2>
+     <h2>Courier form availability lookup</h2>
     <div class="postcode-form">
       <input type="text" id="postcode" placeholder="Enter postcode">
       <button onclick="lookupPostcode()">Search</button>
@@ -112,7 +112,6 @@
           if (data.courier_channel) {
             const icon = data.delivers ? '✅' : '❌';
             resultDiv.innerHTML = `
-              ${icon} <strong>Courier Channel:</strong> ${data.courier_channel}<br>
               ${data.message}
             `;
           } else {

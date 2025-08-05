@@ -75,8 +75,8 @@ app.get('/lookup', (req, res) => {
         courier_channel,
         delivers,
         message: delivers
-          ? '✅ Yes, we deliver to this postcode.'
-          : '❌ Sorry, we do not deliver to this postcode.'
+          ? '✅ Yes, our online courier form is available for your postcode.'
+          : '❌ No, our online courier form is not available yet for your postcode. Check again later.'
       });
     } else {
       return res.json({ message: '❌ No courier found for this postcode.' });
