@@ -6,6 +6,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     .result {
       margin-top: 20px;
@@ -53,7 +55,23 @@
           display: flex;
           gap: 6px;
       }
+      @media(max-width: 449px){
+        .body-content {
+            padding: 40px 20px;
+        }
 
+        .postcode-form {
+            flex-direction: column;
+        }
+
+        input#postcode {
+            width: calc(100% - 40px);
+        }
+
+        button {
+            max-width: fit-content;
+        }
+      }
   </style>
 </head>
 <body>
