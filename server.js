@@ -69,7 +69,7 @@ app.get('/lookup', (req, res) => {
         'qml-qld'
       ];
 
-      const delivers = deliverableChannels.includes(courier_channel);
+      const delivers = deliverableChannels.includes(courier_channel.toLowerCase());
 
       return res.json({
         courier_channel,
