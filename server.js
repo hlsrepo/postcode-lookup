@@ -20,34 +20,47 @@ const connection = mysql.createConnection({
   port: process.env.DB_PORT || 3306
 });
 
+// Connect to MySQL
 connection.connect(err => {
   if (err) {
-    console.error('❌ Error connecting to MySQL:', err);
+    console.error('❌ Error connecting to MySQL:', err.message);
     process.exit(1);
   }
   console.log('✅ Connected to MySQL');
 });
 
-// Lookup endpoint
+// Lookup endpoint (safe)
 app.get('/lookup', (req, res) => {
-  const postcode = req.query.postcode;
+  let postcode = req.query.postcode;
 
+  // Trim whitespace and normalize input
+  if (postcode) {
+    postcode = postcode.trim();
+  }
+
+  // Check if postcode was provided
   if (!postcode) {
     return res.status(400).json({ error: 'Postcode is required' });
   }
 
-  const query = 'SELECT courier_channel FROM courier_mapping WHERE postcode = ? LIMIT 1';
+  // Validate postcode format (letters/numbers only, length 3–10)
+  const postcodeRegex = /^[A-Za-z0-9]{3,10}$/;
+  if (!postcodeRegex.test(postcode)) {
+    return res.status(400).json({ error: 'Invalid postcode format' });
+  }
 
+  // Safe parameterized query to prevent SQL injection
+  const query = 'SELECT courier_channel FROM courier_mapping WHERE postcode = ? LIMIT 1';
   connection.query(query, [postcode], (err, results) => {
     if (err) {
-      console.error('❌ Error executing query:', err);
-      return res.status(500).json({ error: 'Database query error' });
+      console.error('❌ Database query error:', err.message);
+      return res.status(500).json({ error: 'Internal server error' });
     }
 
     if (results.length > 0) {
       const courier_channel = results[0].courier_channel;
 
-      // Check if delivery is available
+      // List of deliverable channels
       const deliverableChannels = [
         'laverty-nsw',
         'dorevitch-vic',
@@ -55,9 +68,10 @@ app.get('/lookup', (req, res) => {
         'abbott',
         'qml-qld'
       ];
+
       const delivers = deliverableChannels.includes(courier_channel);
 
-      res.json({
+      return res.json({
         courier_channel,
         delivers,
         message: delivers
@@ -65,12 +79,12 @@ app.get('/lookup', (req, res) => {
           : '❌ Sorry, we do not deliver to this postcode.'
       });
     } else {
-      res.json({ message: '❌ No courier found for this postcode.' });
+      return res.json({ message: '❌ No courier found for this postcode.' });
     }
   });
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
