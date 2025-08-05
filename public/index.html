@@ -49,7 +49,7 @@
 
       resultDiv.textContent = "🔍 Searching...";
 
-      fetch(`http://localhost:3000/lookup?postcode=${postcode}`)
+      fetch(`/lookup?postcode=${postcode}`)
         .then(response => response.json())
         .then(data => {
           if (data.courier_channel) {
