@@ -115,12 +115,14 @@
               ${data.message}
             `;
           } else {
-            resultDiv.textContent = "❌ No courier found for this postcode.";
+            //no courier found
+            resultDiv.textContent = "❌ No, our online courier form is not available yet for your postcode. Check again later.";
           }
         })
         .catch(error => {
           console.error(error);
-          resultDiv.textContent = "❌ Not available in this area.";
+          //psotcode not in database
+          resultDiv.textContent = "❌ No, our online courier form is not available yet for your postcode. Check again later.";
         });
     }
   </script>
